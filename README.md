@@ -4,7 +4,7 @@
 
 ## Configuração das credenciais
 
-Esta célula define as credenciais para acessar o Watsonx.data. As credenciais incluem:
+Esta célula define as credenciais para acessar o watsonx.data. As credenciais incluem:
 
 wxd_hms_endpoint: o endpoint do serviço Watsonx.data
 wxd_hms_username: o nome de usuário para acessar o Watsonx.data
@@ -16,7 +16,7 @@ source_bucket_secret_key: a chave secreta para o bucket de armazenamento de dado
 ```
 wxd_hms_endpoint = "thrift://aaaaaaaa-bbbb-cccc-dddd-abcdef012345.abcdefghijk0123456789.lakehouse.appdomain.cloud:12345"
 wxd_hms_username = "ibmlhapikey"
-wxd_hms_password = "ErA4_C4szzWPn9CSNWf-T0SDo_qNDO1lP4HLPpfYkpkg"
+wxd_hms_password = "api_key_IAM"
 source_bucket_endpoint = "s3.br-sao.cloud-object-storage.appdomain.cloud"
 source_bucket_access_key = "your_source_access_key"
 source_bucket_secret_key = "e3fc2cfe2d31396fd2e0b110533b92e8fbcc68c7d75c1ae4"
