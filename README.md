@@ -1,86 +1,50 @@
-# watsonx-data
+# Aplicando diferentes engines no watsonx.data através da API
 
-# Executar consultas for watsonx.data
+## Objetivo
 
-## Configuração das credenciais
+Este guia tem como objetivo fornecer uma visão geral de como usar diferentes Engines no Watsonx.data de forma programática para realizar consultas. Ao final deste guia, você entenderá como configurar as credenciais, conectar-se ao Watsonx.data, listar os bancos de dados e executar consultas usando a API através de diferentes engines, como Spark, Presto Java e Presto C++.
 
-Esta célula define as credenciais para acessar o watsonx.data. As credenciais incluem:
+## O que são engines no Watsonx.data?
 
-wxd_hms_endpoint: o endpoint do serviço Watsonx.data
-wxd_hms_username: o nome de usuário para acessar o Watsonx.data
-wxd_hms_password: a senha para acessar o Watsonx.data
-source_bucket_endpoint: o endpoint do bucket de armazenamento de dados
-source_bucket_access_key: a chave de acesso para o bucket de armazenamento de dados
-source_bucket_secret_key: a chave secreta para o bucket de armazenamento de dados
+O Watsonx.data é uma solução para armazenamento de dados na nuvem, como um datalake que permite aos usuários processar e analisar grandes conjuntos de dados de forma eficiente e escalável. Para alcançar isso, o watsonx.data utiliza uma variedade de engines que são projetados para lidar com diferentes tipos de dados e cargas de trabalho.
 
-```
-wxd_hms_endpoint = "thrift://aaaaaaaa-bbbb-cccc-dddd-abcdef012345.abcdefghijk0123456789.lakehouse.appdomain.cloud:12345"
-wxd_hms_username = "ibmlhapikey"
-wxd_hms_password = "api_key_IAM"
-source_bucket_endpoint = "s3.br-sao.cloud-object-storage.appdomain.cloud"
-source_bucket_access_key = "your_source_access_key"
-source_bucket_secret_key = "e3fc2cfe2d31396fd2e0b110533b92e8fbcc68c7d75c1ae4"
-```
-
-## Conexão
-
-Agora vamos realizar a configuração da conexão com o watsonx.data
-
-```
-from pyspark import SparkConf,SparkContext
-from pyspark.sql import SparkSession
-
-# Configuração Spark para wxd
-conf = spark.sparkContext.getConf()
-spark.stop()
-
-conf.setAll([("spark.sql.catalogImplementation", "hive"), \
-    ("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions"), \
-    ("spark.sql.iceberg.vectorization.enabled", "false"), \
-    ("spark.sql.catalog.lakehouse", "org.apache.iceberg.spark.SparkCatalog"), \
-    ("spark.sql.catalog.lakehouse.type", "hive"), \
-    ("spark.sql.catalog.lakehouse.uri", wxd_hms_endpoint), \
-    ("spark.hive.metastore.client.auth.mode", "PLAIN"), \
-    ("spark.hive.metastore.client.plain.username", wxd_hms_username), \
-    ("spark.hive.metastore.client.plain.password", wxd_hms_password), \
-    ("spark.hive.metastore.use.SSL", "true"), \
-    ("spark.hive.metastore.truststore.type", "JKS"), \
-    ("spark.hive.metastore.truststore.path", "file:///opt/ibm/jdk/lib/security/cacerts"), \
-    ("spark.hive.metastore.truststore.password", "changeit"), \
-    ("spark.hadoop.fs.s3a.bucket.wxd-silver.endpoint", source_bucket_endpoint), \
-    ("spark.hadoop.fs.s3a.bucket.wxd-silver.access.key", source_bucket_access_key), \
-    ("spark.hadoop.fs.s3a.bucket.wxd-silver.secret.key", source_bucket_secret_key), \
-])
-
-spark = SparkSession.builder.config(conf=conf).getOrCreate()
-```
-
-### Listando os databases watsonx.data
+Os engines no watsonx.data são componentes de software que são responsáveis por processar e analisar os dados. Eles são projetados para lidar com diferentes tipos de dados, como dados estruturados, semi-estruturados e não estruturados, e podem ser utilizados para realizar uma variedade de tarefas, como consultas, agregações e processamento de dados em tempo real.
 
 
-Uma vez que temos a conexão pronta, podemos listar os bancos de dados existentes no watsonx.data
+## Diferentes cenários, diferentes engines
 
-```
-def list_databases(spark):
-    spark.sql("show databases from lakehouse").show()
+Os diferentes engines são úteis em diferentes cenários, dependendo das necessidades específicas do projeto. Aqui estão algumas situações em que cada engine pode ser mais adequado:
 
-list_databases(spark)
-```
+### Spark
+- Processamento de grandes volumes de dados: O Spark é ideal para processar grandes volumes de dados, pois é capaz de lidar com conjuntos de dados muito grandes e complexos.
+- Análise de dados em tempo real: O Spark é útil para análise de dados em tempo real, pois é capaz de processar dados em tempo real e fornecer resultados rapidamente.
+- Machine learning e deep learning: O Spark é uma boa escolha para machine learning e deep learning, pois é capaz de lidar com grandes volumes de dados e fornecer resultados precisos.
+- Integração com outros sistemas: O Spark é fácil de integrar com outros sistemas, como o Hadoop, o Kafka e o Cassandra.
 
-### Executando consulta de um catálogo específico 
+### Presto Java e C++
+- Consultas em tempo real: O Presto Java é ideal para consultas em tempo real, pois é capaz de processar consultas rapidamente e fornecer resultados em tempo real.
+- Análise de dados em tabelas: O Presto Java é útil para análise de dados em tabelas, pois é capaz de lidar com grandes volumes de dados e fornecer resultados precisos.
+- Integração com outros sistemas: O Presto Java é fácil de integrar com outros sistemas, como o Hadoop, o Kafka e o Cassandra.
+- Desenvolvimento de aplicações: O Presto Java é uma boa escolha para desenvolvimento de aplicações, pois é capaz de fornecer uma API simples e fácil de usar.
 
+Em resumo, cada engine tem suas próprias limitações que devem ser consideradas ao escolher o engine mais adequado para um projeto. É importante avaliar as necessidades específicas do projeto e escolher o engine que melhor se adapte a essas necessidades.
 
-```
-spark.sql("show tables from lakehouse.teste_silver").show()
-```
+## O que existe nesse repositório:
 
-Você pode executar a consulta via engine Spark e transformar em um DataFrame pandas para futuras análises.
+Este repositório contém dois Notebooks que demonstram como usar a API do watsonx.data para realizar consulta, a partir de diferentes engines. O primeiro Notebook, chamado Aplicando a Spark engine no watsonx.data através da API, demonstra como utilizar a API do watsonx.data para criar conexão, listar databases, realizar uma consulta e executá-la por meio do Spark. O segundo Notebook, Aplicando diferentes engines no watsonx.data através da API, aplica o mesmo conceito, porém utilizando engines do Presto, como Presto Java e Presto C++.
 
-```
-df_spark = spark.sql("""
-SELECT 
-  *
-FROM
-  lakehouse.teste_silver.cadastro
-""").toPandas()
-```
+## Requisitos
+
+Para executar os códigos neste repositório, você precisará:
+
+- Ter uma conta no IBM Cloud e ter acesso ao watsonx.data, com os bancos de dados e as engines configuradas.
+- Ter acesso as credencias do Cloud Object Storage onde os dados estejam armazenados.
+
+### Opcional
+
+Você pode executar os notebooks diretamente do watsonx.ai. Para isso, você precisa:
+- Ter um projeto criado no watsonx.ai.
+- Adicionar os dois notebooks ao seu projeto:
+    - Aplicando a Spark engine no watsonx.data através da API
+    -  Aplicando diferentes engines no watsonx.data através da API
+
